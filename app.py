@@ -1,12 +1,20 @@
-from flask import Flask, request
-import os
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+# Salvar último code recebido (em memória para este exemplo)
+last_code = ""
+
 @app.route("/callback")
 def callback():
+    global last_code
     code = request.args.get("code")
-    return f"Code recebido: {code}", 200
+    last_code = code
+    return jsonify({"code": code})
+
+@app.route("/ultimo-code")
+def get_last_code():
+    return jsonify({"code": last_code})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
